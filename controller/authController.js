@@ -60,7 +60,9 @@ export const register = async (req, res) => {
     return res.json({ success: true });
   } catch (error) {
     // if any error while creating user throw an error
-    res.json({ success: false, message: error.message });
+    if (!res.headersSent) {
+      return res.json({ success: false, message: error.message });
+    }
   }
 };
 
@@ -80,7 +82,7 @@ export const login = async (req, res) => {
 
     // if user does not exist send invalid email response
     if (!user) {
-      res.json({ success: false, message: "invalid email" });
+      return res.json({ success: false, message: "invalid email" });
     }
 
     // compare user entered password and stored password from database using bcrypt
@@ -88,7 +90,7 @@ export const login = async (req, res) => {
 
     // if passwprd does not match send invalid password response
     if (!isMatch) {
-      res.json({ success: false, message: "invalid password" });
+      return res.json({ success: false, message: "invalid password" });
     }
 
     // if password match generate token
@@ -107,7 +109,10 @@ export const login = async (req, res) => {
 
     return res.json({ success: true });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    // if any error while login user throw an error
+    if (!res.headersSent) {
+      return res.json({ success: false, message: error.message });
+    }
   }
 };
 
@@ -122,7 +127,9 @@ export const logout = async (req, res) => {
 
     return res.json({ success: true, message: "logged out" });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    if (!res.headersSent) {
+      return res.json({ success: false, message: error.message });
+    }
   }
 };
 
@@ -163,7 +170,9 @@ export const sendVerifyOtp = async (req, res) => {
       message: "verification otp sent on email.",
     });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    if (!res.headersSent) {
+      return res.json({ success: false, message: error.message });
+    }
   }
 };
 
@@ -172,7 +181,7 @@ export const verifyEmail = async (req, res) => {
   const { userId, otp } = req.body;
 
   if (!userId || !otp) {
-    res.json({ success: false, message: "missing details" });
+    return res.json({ success: false, message: "missing details" });
   }
 
   try {
@@ -196,7 +205,9 @@ export const verifyEmail = async (req, res) => {
     await user.save();
     return res.json({ success: true, message: "Email verified successfully" });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    if (!res.headersSent) {
+      return res.json({ success: false, message: error.message });
+    }
   }
 };
 
@@ -205,7 +216,9 @@ export const isAuthenticated = async (req, res) => {
   try {
     return res.json({ success: true });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    if (!res.headersSent) {
+      return res.json({ success: false, message: error.message });
+    }
   }
 };
 
@@ -252,7 +265,9 @@ export const sendResetOtp = async (req, res) => {
       message: "OTP sent to your email.",
     });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    if (!res.headersSent) {
+      return res.json({ success: false, message: error.message });
+    }
   }
 };
 
@@ -295,6 +310,8 @@ export const resetPassword = async (req, res) => {
       message: "Password has been reset successfully",
     });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    if (!res.headersSent) {
+      return res.json({ success: false, message: error.message });
+    }
   }
 };
